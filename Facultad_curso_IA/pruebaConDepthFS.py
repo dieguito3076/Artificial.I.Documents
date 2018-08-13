@@ -42,8 +42,11 @@ coeficiente = 1000
 i = 0
 
 #Ubicandondo puntos de inicio y final
-punto_inicio = 0
-punto_final = 8
+#punto_inicio = 25
+#punto_final = 19
+
+punto_inicio = int(raw_input("Ingresa el punto de inicio: "))
+punto_final  = int(raw_input("Ingresa el punto final: "))
 
 while i < coeficiente:
     for subList in range(len(adjacentList)):
