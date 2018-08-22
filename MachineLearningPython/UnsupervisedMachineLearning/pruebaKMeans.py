@@ -2,18 +2,12 @@ import numpy as np
 from matplotlib import pyplot as plt
 import math
 import random
-import pandas as pd
 
 data = np.random.random_sample((10000, 2))*10
 clusters = 3
 pruebasSize = 20
 prueba = np.array([5,1])
-'''
-df = pd.read_csv('breast-cancer.csv')
-df.replace('?',-99999, inplace = True)
-df.drop(['id'], 1, inplace = True)
-X = np.array(df.drop(['class'], 1))
-'''
+
 class KMeans:
     def __init__(self,data,clusters,pruebasSize):
         self.data = data
@@ -62,13 +56,17 @@ class KMeans:
         print eucledean_distances.index(min(eucledean_distances))
     def graficar(self):
         MatrizClusters = []
-        colors = ['green','red','blue','purple','yellow']
+        colors = ['green','red','blue','purple','yellow','gray','pink','brown']
         for i in range(0,len(self.diccionario)):
             MatrizClusters.append(np.array(self.diccionario[i]))
         self.centroide = np.array(self.centroide)
         for i in range(len(MatrizClusters)):
             plt.scatter(MatrizClusters[i][:,0],MatrizClusters[i][:,1], s = 150, color = colors[i])
         plt.scatter(self.centroide[:,0], self.centroide[:,1], color = 'black', marker = '*')
+        etiquetas =[]
+        for i in range(len(self.diccionario)):
+            etiquetas.append('Cluster' + str(i+1))
+        plt.legend(etiquetas, loc = 'upper left')
         plt.show()
 
 clf = KMeans(data,clusters,pruebasSize)
