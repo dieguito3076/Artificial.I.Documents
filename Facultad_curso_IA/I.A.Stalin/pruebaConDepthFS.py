@@ -38,7 +38,7 @@ def camino(estadoInicial, estadoFinal, adjacentList):
 #Definicion de arrays que tendran los caminos y sus longitudes.
 caminos = []
 indexCaminos = []
-coeficiente = 1000
+coeficiente = 10000
 i = 0
 
 #Ubicandondo puntos de inicio y final
