@@ -3,58 +3,85 @@ from numpy import exp
 from matplotlib import pyplot as plt
 import random
 
-np.random.seed(10)
+np.random.seed(100)
 
-def sigmoid(x):
-    return 1/(1+ exp(-x))
+class Neural_Network:
+    def __init__(self,input_dim, hidden_dim, output_dim, n_iter = 1000):
+        self.input_dim = input_dim
+        self.hidden_dim = hidden_dim
+        self.output_dim = output_dim
+        self.learning_rate = 0.001
+        self.n_iter = n_iter
+        self.errores = []
+        self.indexes = []
+    def sigmoid(self,x):
+        return 1/(1+ exp(-x))
+    def train(self,X, y):
+        self.w1 = 2.0 * np.random.random((self.input_dim, self.hidden_dim))
+        self.w2 = 2.0 * np.random.random((self.hidden_dim,self.output_dim))
+        for i in range(1,self.n_iter):
 
-errores = []
-indexes = []
-repetitions = 12000
-learningRate = 0.001
-input_dim = 2
-output_dim = 2
-hidden_dim = 3
+            h1 = self.sigmoid(np.dot(X,self.w1))
+            h2 = self.sigmoid(np.dot(h1,self.w2))
 
-w1 = 2.0 * np.random.random((input_dim, hidden_dim))-1.0
-w2 = 2.0 * np.random.random((hidden_dim,output_dim))
+            derivate_Loss_h2 = -(y-h2)
+            derivate_h2_z2 = np.dot(h2,(1-h2))
+            h1_Transpose = [[h1[0]],[h1[1]],[h1[2]]]
+            derivate_Loss_W2 = derivate_Loss_h2 * derivate_h2_z2 * h1_Transpose
+            self.w2 = self.w2 - (self.learning_rate * derivate_Loss_W2)
+
+
+            d1_1_1 = np.dot(np.dot(self.w2,(-(y-h2))),np.dot((1-h2),h2))
+            d2_2_1 =  (1-h1) * h1
+            x_Tranpose = [[X[0]],[X[1]]]
+            #x_Tranpose = X.T
+            derivate_Loss_W1 = d1_1_1 * d2_2_1 * x_Tranpose
+            self.w1 = self.w1 - (self.learning_rate * derivate_Loss_W1)
+
+
+
+            m = X.shape[0]
+            Delta_2 = (y.T - np.dot(h1,self.w2))
+            error = np.sum(Delta_2.T ** 2) / (2 * m)
+            self.errores.append(error)
+            self.indexes.append(i)
+
+    def guess(self,X):
+        z1 = np.dot(X,self.w1)
+        h1 = self.sigmoid(z1)
+        z2 = np.dot(h1,self.w2)
+        h2 = self.sigmoid(z2)
+        return h2
+
+
 y = np.array([1,0])
 X = np.array([1.7640,0.0015])
-print w1
-print w2
 
-for i in range(1,repetitions):
-    z1 = np.dot(X,w1)
-    h1 = sigmoid(z1)
-    z2 = np.dot(h1,w2)
-    h2 = sigmoid(z2)
+x_train = np.array([[1,1],[0,0],[1,0],[0,1]])
+y_labels = np.array([0,0,1,1])
 
-    derivate_Loss_h2 = -(y-h2)
-    derivate_h2_z2 = np.dot((1-h2),h2)
-    h1_Transpose = [[h1[0]],[h1[1]],[h1[2]]]
-    derivate_Loss_W2 = derivate_Loss_h2 * derivate_h2_z2 * h1_Transpose
-    w2 = w2 - (learningRate * derivate_Loss_W2)
+clf = Neural_Network(2,3,1)
+
+for i in range(0,4):
+    clf.train(x_train[i], y_labels[i])
+
+print clf.guess([0,0])
+print clf.guess([1,0])
+print clf.guess([1,1])
+print clf.guess([0,1])
 
 
-    d1_1_1 = np.dot(np.dot(w2,(-(y-h2))),np.dot((1-h2),h2))
-    d2_2_1 =  (1-h1) * h1
-    x_Tranpose = [[X[0]],[X[1]]]
-    derivate_Loss_W1 = d1_1_1 * d2_2_1 * x_Tranpose
-    w1 = w1 - (learningRate * derivate_Loss_W1)
-
-    m = X.shape[0]
-    Delta_2 = (y.T - z2)
-    error = np.sum(Delta_2.T ** 2) / (2 * m)
-    errores.append(error)
-    indexes.append(i)
-
-print "\n"*4
-print w1
-print w2
-plt.plot(indexes,errores)
+print clf.w1
+print clf.w2
+'''
+clf.train(X, y)
+for i in range(0,len(clf.errores)):
+    plt.plot(clf.indexes[i],clf.errores[i], marker = 'o', color = 'red')
+plt.xlabel('iterations')
+plt.ylabel('error')
 plt.show()
 
-'''
+
 import numpy as np
 import ipdb
 from scratch_mlp import utils
